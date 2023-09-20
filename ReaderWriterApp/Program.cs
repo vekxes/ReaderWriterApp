@@ -1,15 +1,40 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using ReaderWriterApp;
+using System.ComponentModel;
 
-Parallel.For(0, 100, i =>
-{
-    if (i % 2 == 0)
-        Server.AddToCount(2);
-    else
-        Console.WriteLine(Server.GetCount());
-});
-Console.WriteLine("Stop");
+class WriteReadApp
+{    
+    static Random _rand = new Random();
 
-Console.WriteLine(Server.GetCount());
+    static void Main()
+    {
+        new Thread(Write).Start("A");
+        new Thread(Read).Start("Reader AAA");
+        new Thread(Read).Start("Reader BBB");
+        new Thread(Read).Start("Reader CCC");        
+        new Thread(Write).Start("B");
+    }
 
-Console.ReadKey();
+    static void Read(object threadID)
+    {
+        while (true)
+        {
+            Console.WriteLine("Поток " + threadID + " прочитал " + Server.GetCount());
+            Thread.Sleep(200);
+        }
+    }
+
+    static void Write(object threadID)
+    {
+        while (true)
+        {
+            int newNumber = GetRandNum(100);
+            Server.AddToCount(newNumber);
+            Console.WriteLine("Поток " + threadID + " добавил " + newNumber);
+            Thread.Sleep(1000);
+        }
+    }
+
+    static int GetRandNum(int max) { lock (_rand) return _rand.Next(max); }
+}
+

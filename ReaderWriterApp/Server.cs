@@ -10,6 +10,7 @@ namespace ReaderWriterApp
     {
         private static int count;
         private static ReaderWriterLockSlim locker = new ReaderWriterLockSlim();
+        
 
         public static void AddToCount(int value)
         {
@@ -20,14 +21,14 @@ namespace ReaderWriterApp
 
         public static int GetCount()
         {
-            locker.EnterWriteLock();
+            locker.EnterReadLock();
             try
             {
                 return count;
             }
             finally
             {
-                locker.ExitWriteLock();
+                locker.ExitReadLock();
             }
         }
     }
